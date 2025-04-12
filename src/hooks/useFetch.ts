@@ -6,10 +6,10 @@ import {AxiosResponse} from 'axios'
 import useAuthStore from './useAuth'
 
 interface IProps<T> {
-    api: (a?: unknown, b?: unknown) => Promise<AxiosResponse<T, unknown>>
-    param?: unknown
+    api: (a?: any, b?: any) => Promise<AxiosResponse<T, any>>
+    param?: any
     key: QueryKey
-    onSuccess?: (a: unknown) => void
+    onSuccess?: (a: any) => void
     requireAuth?: boolean
     select?: (a: { data: T }) => T,
     enabled?: boolean
