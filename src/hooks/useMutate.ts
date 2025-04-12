@@ -1,4 +1,6 @@
 'use client'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import {useMutation} from "@tanstack/react-query";
 import {toast} from 'react-toastify';
 import {AxiosResponse} from "axios";
@@ -33,7 +35,7 @@ const useMutate = <T, K>(
 ) => {
     const token = useAuthStore((state) => state.token)
 
-    return useMutation<K, K, T>({
+    return useMutation<K, Error, T>({
         mutationFn: async (data: T) => {
 
             const response = await api(data, {id: id || '', token, params});

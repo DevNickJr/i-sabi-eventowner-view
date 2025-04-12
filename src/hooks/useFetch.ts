@@ -1,11 +1,13 @@
 "use client"
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import {keepPreviousData, QueryKey, useQuery} from '@tanstack/react-query'
 import {AxiosResponse} from 'axios'
 import useAuthStore from './useAuth'
 
 interface IProps<T> {
-    api: (a?: any, b?: any) => Promise<AxiosResponse<T, any>>
-    param?: any
+    api: (a?: unknown, b?: unknown) => Promise<AxiosResponse<T, unknown>>
+    param?: unknown
     key: QueryKey
     onSuccess?: (a: unknown) => void
     requireAuth?: boolean
@@ -13,7 +15,7 @@ interface IProps<T> {
     enabled?: boolean
 }
 
-const useFetch = <T, >({api, param, key, select, enabled, ...rest}: IProps<T>) => {
+const useFetch = <T,>({api, param, key, select, enabled, ...rest}: IProps<T>) => {
     const token = useAuthStore((state) => state.token)
 
     const {data, error, isLoading, isFetching, refetch, fetchStatus, isPlaceholderData } = useQuery({
