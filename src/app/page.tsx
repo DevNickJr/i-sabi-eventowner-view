@@ -1,103 +1,76 @@
-import Image from "next/image";
+"use client"
+import Loader from '@/components/Loader'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import useMutate from '@/hooks/useMutate'
+import { ILoginSuccessData, IReducerAction, IUserLogin } from '@/interfaces'
+import { apiLogin } from '@/services/AuthService'
+import Image from 'next/image'
+import { useRouter } from 'next/navigation'
+import React, { FormEvent, useReducer } from 'react'
+import { toast } from 'react-toastify'
+import Logo from "@/assets/logo.png"
+import useAuthStore from '@/hooks/useAuth'
+// import { useAuthContext } from '@/hooks/useAuthContext'
 
-export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+const initialState: IUserLogin = {
+  username: '',
+  password: ''
 }
+
+
+const Home = () => {
+  const router = useRouter()
+  const update = useAuthStore((state) => state.update)
+  const [user, dispatch] = useReducer((state: IUserLogin, action: IReducerAction<keyof IUserLogin>) => {
+    if (action.type === "reset") {
+      return initialState
+    }
+    return { ...state, [action.type]: action.payload }
+  }, initialState)
+
+  
+  const loginMutation = useMutate<IUserLogin, ILoginSuccessData>(
+    apiLogin,
+    {
+      onSuccess: (data: ILoginSuccessData) => {
+        update(data)
+        toast.success("Logged in Successfully")
+        return router.push('/dashboard')
+      },
+      showErrorMessage: true,
+    }
+  )
+
+  const handleLogin = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
+    e.preventDefault();
+    loginMutation.mutate(user)
+  }
+
+  return (
+    <>
+      {loginMutation?.isPending && <Loader />}
+      <div className='grid min-h-screen p-4 place-items-center lg:h-screen'>
+        <form onSubmit={handleLogin} className='flex flex-col items-center justify-center w-full max-w-lg gap-5'>
+          <div className='flex flex-col items-center justify-center gap-4 text-center'>
+            <Image src={Logo} alt={""} className='w-32' />
+            <h3 className='font-bold text-[#111827] text-2xl mb-4'>Login to your account</h3>
+          </div>
+          <div className="flex flex-col w-full gap-2">
+            <Label htmlFor="username">Email address</Label>
+            <Input value={user?.username} onChange={(e) => dispatch({ type: "username", payload: e.target.value})}  id='username' type='text' placeholder='' />
+          </div>
+          <div className="flex flex-col w-full gap-2">
+            <Label htmlFor="password">Password</Label>
+            <Input value={user?.password} onChange={(e) => dispatch({ type: "password", payload: e.target.value})} id='password' type='password' placeholder='' />
+          </div>
+          <Button type='submit' className='w-full p-4 mt-6 md:p-6'>Log in</Button>
+          {/* <Link href={'/forgot-password'} className='text-sm text-purple-600'>Forgotten your password?</Link> */}
+        </form>
+      </div>
+    </>
+  )
+}
+
+export default Home
