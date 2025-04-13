@@ -11,7 +11,7 @@ interface IProps<T> {
     key: QueryKey
     onSuccess?: (a: any) => void
     requireAuth?: boolean
-    select?: (a: { data: T }) => T,
+    select?: (a: { data: T }) => T,    
     enabled?: boolean
 }
 
