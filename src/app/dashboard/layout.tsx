@@ -3,7 +3,7 @@ import React, { Suspense } from 'react'
 import { dashboardNavs } from '@/constants/nav'
 import InlineLoader from '@/components/Loader/Inline'
 import SideNav from './_components/SideNav'
-import VendorHeader from './_components/Header'
+import Header from './_components/Header'
 // import { useAuthContext } from '@/hooks/useAuthContext'
 
 const Layout = ({ children }: { children: React.ReactNode }) => { 
@@ -30,7 +30,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       <div className={`flex w-full h-screen overflow-hidden font-poppins bg-white`}> 
         <SideNav nav={dashboardNavs} />
         <div className="relative flex-1 overflow-y-auto rounded-md">
-          <VendorHeader nav={dashboardNavs} />
+          <Header nav={dashboardNavs} />
           <div className='px-4 pt-4 md:px-8 md:py-8'>
             {children}
           </div>

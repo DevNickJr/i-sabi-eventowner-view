@@ -3,9 +3,6 @@ import React from 'react'
 import ErrorImg from "@/assets/logo.png"
 import Image from 'next/image'
 import { Button } from '../ui/button'
-import useMutate from '@/hooks/useMutate'
-import { apiLogout } from '@/services/AuthService'
-import Loader from '../Loader'
 import { useRouter } from 'next/navigation'
 import useAuthStore from '@/hooks/useAuth'
 
@@ -20,19 +17,13 @@ const LogoutModal = ({ isOpen, setIsOpen, logout }: IProps) => {
 
     const context = useAuthStore()
     const router = useRouter()
-    const logoutMutation = useMutate<unknown, unknown>(
-        apiLogout,
-        {
-        onSuccess: () => {
-            // context.dispatch({ type: "LOGOUT", payload: null})
-            console.log({ context })
-            logout?.()
-            setIsOpen(false)
-            return router.push('/')
-        },
-        showErrorMessage: true,
-        }
-    )
+
+    const logOutHandler = () => {
+        context.reset()
+        logout?.()
+        setIsOpen(false)
+        return router.push('/')
+    }
     
     React.useEffect(() => {
         if (isOpen) {
@@ -52,11 +43,9 @@ const LogoutModal = ({ isOpen, setIsOpen, logout }: IProps) => {
               closeModal()
           }
     }
-    
        
     return (
         <>
-        {(logoutMutation?.isPending) && <Loader />}
         {
             isOpen &&
                 <div onClick={handleOutsideClick} className='fixed top-0 left-0 z-40 max-h-screen min-h-screen p-4 py-40 overflow-hidden md:p-8 md:py-40 bg-black/50 h-[100vh] w-[100vw]'>
@@ -68,11 +57,11 @@ const LogoutModal = ({ isOpen, setIsOpen, logout }: IProps) => {
                             <h2 className='text-xl font-bold text-black'>You are about to Logout</h2>
                             <p className='mb-4 text-sm font-semibold text-[#abb4bf] '>Are you sure you want to logout from this site?</p>
                         </div>
-                        <div className="flex">
-                            <Button className='w-full py-3 md:py-5 rounded-r-none max-w-56 bg-[#ED3A3A0D] text-black' onClick={() => setIsOpen(false)} >
+                        <div className="flex gap-2">
+                            <Button className='py-3 md:py-5 rounded-r-none bg-[#ED3A3A0D] text-black' onClick={() => setIsOpen(false)} >
                                 Cancel
                             </Button>
-                            <Button className='w-full py-3 rounded-l-none md:py-5 max-w-56' onClick={() => logoutMutation?.mutate({})} >
+                            <Button className='py-3 rounded-l-none md:py-5' onClick={() => logOutHandler()}>
                                 Confirm
                             </Button>
                         </div>

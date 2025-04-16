@@ -5,6 +5,8 @@ import NoResult from '@/components/NoResult'
 import { apiGetTxns } from '@/services/AuthService'
 import { ITransactionResponse } from '@/interfaces'
 import { useParams } from 'next/navigation'
+import { txnColumnnsMaker } from '@/components/Table/column'
+import DataTable from '@/components/Table/data-table'
 
 const Event = () => {
   const params = useParams<{ id: string }>()
@@ -20,7 +22,11 @@ const Event = () => {
       {
         !!txns?.transactionCount ? 
         <>
-        <div className='grid lg:grid-cols-3 gap-6'>
+            <DataTable
+                columns={txnColumnnsMaker()} 
+                data={txns?.transList ?? []} 
+            />
+        {/* <div className='grid lg:grid-cols-3 gap-6'>
           {
             txns?.transList?.map((txn, index) => {
               return (
@@ -41,7 +47,7 @@ const Event = () => {
               )
             })
           }
-        </div>
+        </div> */}
         </>
       : <>
           <NoResult

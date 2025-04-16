@@ -15,7 +15,7 @@ interface IProps {
     nav: INav[];
 }
 
-const VendorLinks = ({ isOpen, setIsOpen, nav }: IProps) => {
+const Links = ({ isOpen, setIsOpen, nav }: IProps) => {
     const [logoutModalIsOpen, setLogoutModalOpen] = useState(false)
     const [collapse, ] = useState(false)
     const pathname = usePathname();
@@ -74,4 +74,4 @@ const VendorLinks = ({ isOpen, setIsOpen, nav }: IProps) => {
     )
 }
 
-export default VendorLinks
+export default Links

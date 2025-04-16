@@ -6,6 +6,7 @@ import Loader from "@/components/Loader"
 import { apiGetBanks, apiVerifyBank, apiWithdraw } from "@/services/PaymentService"
 import useMutate from "@/hooks/useMutate"
 import { IAddBank, IAddBankAction, IBanksResponse, IVerifyBank, IVerifyBankResponse } from "@/interfaces"
+import useAuthStore from "@/hooks/useAuth"
 
 const initialState = {
     account_number: "",
@@ -16,6 +17,8 @@ const initialState = {
 
 const Withdraw = () => {
     const [amount, setAmount] = useState(0)
+    const context = useAuthStore()
+
     
     const [addBank, dispatch] = useReducer((state: IAddBank, action: IAddBankAction) => {
         if (action.type === "reset") {
@@ -85,8 +88,9 @@ const Withdraw = () => {
   return (
     <div className={`pt-4 px-4`}>
         {(verifyBankMutation?.isPending || withdrawMutation?.isPending) && <Loader />}
-        <div className="mb-4 md:mb-7">
-            <h1 className="text-2xl font-bold">Withdraw</h1>
+        <div className="mb-4 md:mb-7 flex flex-col gap-2.5">
+            <h1 className="text-2xl font-bold">Balance: ₦ {context.doc?.balance}</h1>
+            <p className='text-sm xl:textbase'>Fill and submit the form below to make a withdrawal</p>
         </div>
         <div className="flex-col text-sm md:flex">
             <div className="grid gap-3 md:mt-3 md:grid-cols-11">

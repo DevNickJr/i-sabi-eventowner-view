@@ -6,20 +6,24 @@ type State = ILoginSuccessData
 
 type Action = {
   update: (state: State) => void
+  reset: () => void
+}
+
+const init = {
+  _id: '',
+  balance: 0,
+  email: '',
+  username: '',
+  phone: '',
 }
 
 export const useAuthStore = create<State & Action>()(
   persist(
     (set) => ({
       token: '',
-      doc: {
-          _id: '',
-          balance: 0,
-          email: '',
-          username: '',
-          phone: '',
-      },
+      doc: init,
       update: (val: State) => set(() => (val)),
+      reset: () => set(() => ({ doc: init, token: '' })),
     }),
     {
       name: 'auth', 
