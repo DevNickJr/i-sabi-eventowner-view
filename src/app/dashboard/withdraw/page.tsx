@@ -39,7 +39,7 @@ const Withdraw = () => {
         apiVerifyBank,
         {
           onSuccess: () => {
-              toast.success("Operation Successful")
+            //   toast.success("Operation Successful")
               return
           },
           showErrorMessage: true,
@@ -50,8 +50,16 @@ const Withdraw = () => {
         apiWithdraw,
         {
           onSuccess: () => {
-              setAmount(0)
               toast.success("Your withdrawal is being processed")
+              dispatch({ type: "reset", payload: '' })
+              context.update({
+                token: context.token,
+                doc: {
+                    ...context.doc,
+                    balance: context.doc?.balance - amount,
+                }
+              })
+              setAmount(0)
               return
           },
           showErrorMessage: true,
