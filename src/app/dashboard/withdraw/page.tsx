@@ -87,6 +87,10 @@ const Withdraw = () => {
     }
  
     const handleWithdraw = () => {
+        // min amount 100
+        if (amount < 100) {
+            return toast.info('Minimum withdrawal amount is 100 naira')
+        }
         return withdrawMutation.mutate({
             amount,
             account: addBank.account_number,
@@ -131,7 +135,11 @@ const Withdraw = () => {
                 <div className="col-span-6 md:ml-3">
                     <div className="flex flex-col gap-2">
                         <label htmlFor="phone" className="text-sm">Enter Amount (NGN)</label>
-                        <input value={amount ? amount : ''} onChange={(e) => setAmount(Number(e.target.value))} type="number" placeholder="Min 50.00" className="p-4 text-sm bg-transparent border rounded-md" />
+                        <input
+                            min={100}
+                            value={amount ? amount : ''} 
+                            onChange={(e) => setAmount(Number(e.target.value))} 
+                            type="number" placeholder="Min 100.00" className="p-4 text-sm bg-transparent border rounded-md" />
                     </div>
                     <button onClick={handleWithdraw} className='w-full p-3 px-10 mt-8 mb-3 text-sm text-white rounded-full md:w-fit bg-primary'>Withdraw</button>
                 </div>
